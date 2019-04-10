@@ -317,3 +317,9 @@ h3.footer_title { font-size: 19px; }
 .footer_box ul li { margin-bottom: 8px; }
 .footer_social { padding: 10px 0 20px; text-align: center; }
 .footer_social img { float: none; margin: 0 6px; }
+
+p.woocommerce-store-notice.demo_store {
+    position: fixed;
+    bottom: 0;
+    top: 95%;
+}
