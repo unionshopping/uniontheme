@@ -153,17 +153,18 @@ function bbloomer_use_edit_order_total( $cart ) {
 add_action( 'woocommerce_checkout_update_order_meta', 'bbloomer_save_edit_order' );
   
 function bbloomer_save_edit_order( $order_id ) {
-    $edited = WC()->session->get('edit_order');
+    $edited = WC()->session->get( 'edit_order' );
     if ( ! empty( $edited ) ) {
-        // update this new order
+        $new_order      = new WC_Order( $order_id );
+        $old_order      = new WC_Order( $edited );
+        $new_order_edit = $new_order->get_edit_order_url();
+        $old_order_edit = $old_order->get_edit_order_url();
+        // update this new order.
         update_post_meta( $order_id, '_edit_order', $edited );
-        $neworder = new WC_Order( $order_id );
-        $oldorder_edit = get_edit_post_link( $edited );
-        $neworder->add_order_note( 'Order placed after editing. Old order number: <a href="' . $oldorder_edit . '">' . $edited . '</a>' );
-        // cancel previous order
-        $oldorder = new WC_Order( $edited );
-        $neworder_edit = get_edit_post_link( $order_id );
-        $oldorder->update_status( 'cancelled', 'Order cancelled after editing. New order number: <a href="' . $neworder_edit . '">' . $order_id . '</a> -' );
+        $new_order->add_order_note( sprintf( __( 'Order placed after editing. Old order number: %s', 'crispybacon-woo-modify-order' ), '<a href="' . $old_order_edit . '">' . $edited . '</a>' ) );
+        // cancel previous order.
+        $old_order->update_status( 'cancelled', sprintf( __( 'Order cancelled after editing. New order number: %s' ), 'crispybacon-woo-modify-order' ), ' <a href="' . $new_order_edit . '">' . $order_id . '</a> - ' );
+        WC()->session->set( 'edit_order', '' );
     }
 }
 
